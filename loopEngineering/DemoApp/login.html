@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Sign in | Signal Room</title>
+    <link rel="stylesheet" href="css/login.css">
+    <script type="module" src="js/auth.js"></script>
+  </head>
+  <body class="login-page">
+    <main class="login-shell">
+      <section class="login-intro" aria-labelledby="brand-title">
+        <a class="brand-mark" href="login.html" aria-label="Signal Room home">
+          <span class="brand-mark__symbol" aria-hidden="true">S</span>
+          <span class="brand-mark__name">Signal Room</span>
+        </a>
+        <div class="intro-copy">
+          <p class="eyebrow"><span class="signal-dot" aria-hidden="true"></span> FIELD INSTRUMENTATION / 01</p>
+          <h1 id="brand-title">Read the motion.<br><span>Know the machine.</span></h1>
+          <p class="intro-description">Live diagnostics for the hardware on your bench.</p>
+        </div>
+        <div class="intro-footer" aria-hidden="true">
+          <span>MPU6050 / 6-AXIS IMU</span>
+          <span>THINGSBOARD CLOUD</span>
+        </div>
+      </section>
+
+      <section class="login-panel" aria-labelledby="login-title">
+        <div class="panel-heading">
+          <p class="eyebrow">SECURE ACCESS</p>
+          <h2 id="login-title">Welcome back</h2>
+          <p>Sign in with your customer account to connect.</p>
+        </div>
+
+        <form id="login-form" class="login-form" novalidate>
+          <div class="form-field">
+            <label for="username">Email address</label>
+            <input
+              id="username"
+              name="username"
+              type="email"
+              autocomplete="username"
+              inputmode="email"
+              placeholder="you@company.com"
+              required
+            >
+          </div>
+          <div class="form-field">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              required
+            >
+          </div>
+          <p id="login-error" class="status-message" data-kind="error" role="alert" hidden></p>
+          <button class="login-submit button-primary" type="submit">
+            <span class="login-submit__label">Login to Dashboard</span>
+            <span class="login-submit__arrow" aria-hidden="true">&#8594;</span>
+          </button>
+          <p class="form-footnote"><span class="lock-mark" aria-hidden="true">&#9679;</span> Authenticated through ThingsBoard</p>
+        </form>
+
+        <div class="connection-status" role="status" aria-live="polite">
+          <span class="connection-status__indicator" aria-hidden="true"></span>
+          <span>Secure cloud connection</span>
+          <span class="connection-status__host">thingsboard.cloud</span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Raw Signal Diagnostics | Signal Room</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script type="module" src="js/dashboard.js"></script>
+  </head>
+  <body class="dashboard-page">
+    <header class="topbar">
+      <a class="brand-mark" href="dashboard.html" aria-label="Signal Room dashboard">
+        <span class="brand-mark__symbol" aria-hidden="true">S</span>
+        <span class="brand-mark__name">Signal Room</span>
+      </a>
+      <div class="topbar__device" aria-label="Connected device">
+        <span class="device-indicator" aria-hidden="true"></span>
+        <span id="device-name">ESP32 S3 &amp; MPU6050</span>
+        <span id="connection-state" class="connection-state">Connecting</span>
+      </div>
+      <button id="logout-button" class="button-secondary logout-button" type="button">
+        <span aria-hidden="true">&#8599;</span>
+        <span>Logout</span>
+      </button>
+    </header>
+
+    <main class="dashboard-main">
+      <section class="dashboard-heading" aria-labelledby="dashboard-title">
+        <div>
+          <p class="eyebrow">FIELD INSTRUMENTATION / LIVE SESSION</p>
+          <h1 id="dashboard-title">Raw Signal Diagnostics</h1>
+          <p class="dashboard-subtitle">Motion, orientation, and board temperature from the sensor.</p>
+        </div>
+        <div class="live-indicator" aria-live="polite">
+          <span class="live-indicator__dot" aria-hidden="true"></span>
+          <span id="telemetry-state">Waiting for signal</span>
+        </div>
+      </section>
+
+      <div class="dashboard-grid">
+        <section class="panel chart-panel" aria-labelledby="chart-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">ACCELERATION / 8 SECOND WINDOW</p>
+              <h2 id="chart-title">Live signal waveform</h2>
+            </div>
+            <span class="chart-unit">g</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="acceleration-chart" aria-label="Live acceleration chart for X, Y, and Z axes" role="img">
+              Live acceleration chart for X, Y, and Z axes.
+            </canvas>
+            <div id="chart-empty" class="chart-empty" aria-live="polite">
+              <span class="chart-empty__pulse" aria-hidden="true"></span>
+              <span>Waiting for sensor data</span>
+            </div>
+          </div>
+          <div class="chart-footer">
+            <div class="chart-legend" aria-label="Acceleration axes">
+              <span><i class="legend-dot legend-dot--x" aria-hidden="true"></i>X axis</span>
+              <span><i class="legend-dot legend-dot--y" aria-hidden="true"></i>Y axis</span>
+              <span><i class="legend-dot legend-dot--z" aria-hidden="true"></i>Z axis</span>
+            </div>
+            <span class="chart-range">-16 g <span aria-hidden="true">/</span> +16 g</span>
+          </div>
+        </section>
+
+        <section class="panel tilt-panel" aria-labelledby="tilt-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">ORIENTATION / ACCELEROMETER</p>
+              <h2 id="tilt-title">Sensor tilt</h2>
+            </div>
+            <span class="tilt-range">+/- 1 g</span>
+          </div>
+          <div class="tilt-stage">
+            <div class="tilt-gauge" role="img" aria-label="Sensor tilt indicator">
+              <span class="tilt-gauge__axis tilt-gauge__axis--horizontal" aria-hidden="true"></span>
+              <span class="tilt-gauge__axis tilt-gauge__axis--vertical" aria-hidden="true"></span>
+              <span class="tilt-gauge__center" aria-hidden="true"></span>
+              <span id="tilt-dot" class="tilt-gauge__dot" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="tilt-readout">
+            <span>X <strong id="tilt-x-value">--</strong> g</span>
+            <span>Y <strong id="tilt-y-value">--</strong> g</span>
+          </div>
+        </section>
+
+        <section class="panel readings-panel" aria-labelledby="readings-title">
+          <div class="section-heading readings-heading">
+            <div>
+              <p class="eyebrow">LATEST VALUES / RAW UNITS</p>
+              <h2 id="readings-title">Sensor readings</h2>
+            </div>
+            <span id="last-update" class="last-update">No updates yet</span>
+          </div>
+          <div class="readings-groups">
+            <section class="reading-group" aria-labelledby="acceleration-title">
+              <div class="reading-group__heading">
+                <h3 id="acceleration-title">Acceleration</h3>
+                <span>g</span>
+              </div>
+              <div class="reading-values">
+                <div class="reading-value"><span>X</span><strong id="value-acc-x">--</strong></div>
+                <div class="reading-value"><span>Y</span><strong id="value-acc-y">--</strong></div>
+                <div class="reading-value"><span>Z</span><strong id="value-acc-z">--</strong></div>
+              </div>
+            </section>
+            <section class="reading-group" aria-labelledby="gyroscope-title">
+              <div class="reading-group__heading">
+                <h3 id="gyroscope-title">Gyroscope</h3>
+                <span>°/s</span>
+              </div>
+              <div class="reading-values">
+                <div class="reading-value"><span>X</span><strong id="value-gyro-x">--</strong></div>
+                <div class="reading-value"><span>Y</span><strong id="value-gyro-y">--</strong></div>
+                <div class="reading-value"><span>Z</span><strong id="value-gyro-z">--</strong></div>
+              </div>
+            </section>
+            <section class="reading-group" aria-labelledby="angle-title">
+              <div class="reading-group__heading">
+                <h3 id="angle-title">Angle</h3>
+                <span>°</span>
+              </div>
+              <div class="reading-values">
+                <div class="reading-value"><span>X</span><strong id="value-angle-x">--</strong></div>
+                <div class="reading-value"><span>Y</span><strong id="value-angle-y">--</strong></div>
+                <div class="reading-value"><span>Z</span><strong id="value-angle-z">--</strong></div>
+              </div>
+            </section>
+            <section class="reading-group reading-group--temperature" aria-labelledby="temperature-title">
+              <div class="reading-group__heading">
+                <h3 id="temperature-title">Temperature</h3>
+                <span>°C</span>
+              </div>
+              <div class="reading-values reading-values--single">
+                <div class="reading-value"><span>MPU</span><strong id="value-mpu-temp">--</strong></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel control-panel" aria-labelledby="control-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">HARDWARE / REMOTE CONTROL</p>
+              <h2 id="control-title">Board LED</h2>
+            </div>
+            <span class="control-state" id="led-state-label">OFF</span>
+          </div>
+          <div class="led-control-row">
+            <div>
+              <p class="led-control-title">Status light</p>
+              <p class="led-control-description">Toggle the indicator on the connected board.</p>
+            </div>
+            <label class="switch">
+              <input id="led-switch" type="checkbox" role="switch" aria-label="Board LED" aria-checked="false">
+              <span class="switch__track" aria-hidden="true"><span class="switch__thumb"></span></span>
+            </label>
+          </div>
+          <p id="led-error" class="status-message" data-kind="error" role="alert" hidden></p>
+        </section>
+      </div>
+    </main>
+
+    <footer class="dashboard-footer">
+      <span>SIGNAL ROOM <span aria-hidden="true">/</span> MPU6050 DIAGNOSTICS</span>
+      <span id="stream-indicator">STREAM INITIALIZING</span>
+    </footer>
+  </body>
+</html>

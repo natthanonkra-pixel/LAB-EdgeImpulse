@@ -1,0 +1,26 @@
+- [x] Create shared `common.css`
+	- Verify: CSS defines the shared palette, spacing, radii, shadows, typography, and base styles as custom properties; Inter is the only external resource; controls have visible focus styling.
+	- Checked: VS Code stylesheet diagnostics report no errors; reviewed the token definitions and focus/disabled control states.
+- [x] Create login page markup and responsive styles
+	- Verify: username, password, and `Login to Dashboard` render at 320px, 768px, and 1280px; labels and controls remain usable without overflow.
+	- Checked: browser rendered both fields and submit action at 320px, 768px, and 1280px with no horizontal overflow; VS Code diagnostics report no errors. Authentication behavior is covered by the next task.
+- [x] Implement ThingsBoard API and authentication flow
+	- Verify: API paths, headers, bodies, and response fields match `L1/3api-contract.md`; successful login stores all five required session keys and opens the dashboard; failures show friendly messages; authenticated 401 triggers one refresh and one retry.
+	- Checked: mocked browser login confirmed all four REST requests, contract headers/bodies, five session keys, and navigation; mocked 401 confirmed one refresh and one retry (persistent 401 stopped after retry); invalid email and 401 login showed friendly errors; VS Code diagnostics passed; security search found no `localStorage`, `innerHTML`, or logging.
+- [x] Create dashboard structure and responsive styles
+	- Verify: logout, chart, numeric tiles, tilt gauge, and LED control render at 320px, 768px, and 1280px with no overlapping content.
+	- Checked: browser rendered all four panels, ten telemetry fields, chart, tilt gauge, LED switch, and logout at 320px, 768px, and 1280px without horizontal overflow; VS Code diagnostics report no errors. Functional behavior is covered by subsequent tasks.
+- [x] Implement validated telemetry rendering and rolling chart
+	- Verify: only the ten required telemetry keys are subscribed to; valid samples update all numeric tiles, tilt position, and an 8-second canvas plot; malformed, non-finite, or out-of-range values do not corrupt displayed state.
+	- Checked: browser synthetic-message tests confirmed ten values update; unknown keys are ignored; malformed, hex, non-finite, stale and out-of-range samples do not overwrite good state; tilt clamps to bounds; canvas painted nonblank pixels and retained all 160 samples at 20 Hz; old points were pruned; editor diagnostics passed.
+- [x] Implement WebSocket lifecycle and LED state synchronization
+	- Verify: telemetry and client `led_state` use the contract subscription IDs; disconnect triggers one token refresh before exponential-backoff reconnect; REST attribute state initializes the switch with OFF fallback.
+	- Checked: fake WebSocket verified exact telemetry/attribute subscription IDs and ten-key filter, both message routes, REST ON and OFF fallback handling, silent token refresh before reconnect with rotated token in the URL, and responsive live rendering at 320px, 768px, and 1280px; editor diagnostics passed.
+- [x] Implement LED two-way RPC and logout cleanup
+	- Verify: `setLed` uses the contract body/path; success adopts returned `led_state`, failures revert the switch with a friendly message; logout clears session credentials, closes sockets, and returns to login.
+	- Checked: mocked RPC success confirmed `POST /api/rpc/twoway/{deviceId}` with `setLed`/boolean/5000 payload and device-confirmed state; mocked 504 restored the previous switch with “Device not responding”; logout closed the fake socket, cleared all five session keys, and returned to login.
+- [x] Run end-to-end and security review
+	- Verify: login-to-dashboard flow and live device interactions are confirmed where credentials/device access are available; requirement-by-requirement review records evidence, with no unsafe server-data HTML rendering, token logging, or `localStorage` use.
+	- Requirement review: PASS — login form and responsive breakpoints (browser); login/customer/device/credentials chain and session keys (mocked browser); dashboard session guard (browser); ten telemetry values and raw units (synthetic stream); acceleration canvas, axis colors, 8-second window, and 20 Hz capacity (canvas pixel/sample checks); tilt linear mapping and clamping (synthetic boundary values); LED initial attribute, WebSocket state, RPC success/failure rollback, and logout (mocked browser); out-of-scope features absent (source review); API paths/headers/payloads match `L1/3api-contract.md` (source + mocked request capture); request deadlines and JSON parsing are guarded (source review); security scan found no `innerHTML`, `localStorage`, or token/credential logs.
+	- Live device confirmation: NOT RUN — no ThingsBoard credentials or connected device were provided; simulated endpoint responses are not represented as live-cloud validation.
+	- Human checkpoint: CONFIRMED — developer approved the Phase 5 review on 2026-10-19.
